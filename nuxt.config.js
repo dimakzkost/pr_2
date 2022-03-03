@@ -39,12 +39,15 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: 'http://45.129.0.132:8000'
+  },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
@@ -57,7 +60,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -74,5 +77,43 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
+  },
+  auth: {
+    strategies: {
+      local: {
+        scheme: 'refresh',
+        localStorage: {
+          prefix: 'auth.'
+        },
+        token: {
+          prefix: 'acces_token.',
+          property: 'access',
+          maxAge: 60,
+          global: true
+        },
+        refreshToken: {
+          prefix: 'refresh_token.',
+          property: 'refresh',
+          data: 'refresh',
+          maxAge:  60 * 60 * 24 * 15
+        },
+        user: {
+          property: 'user',
+          autoFetch: true
+        },
+        endpoints: {
+          login: {url: '/api/token/', method: 'post'},
+          refresh: {url: '/api/token/refresh/', method: 'post' },
+          user: {url: '/api/v1/user/', method: 'get'},
+          logout: {url: '/api/v1/user_logout/', method: 'post' }
+        },
+        redirect: {
+          login: '/pr_zak',
+          logout: '/',
+          callback: '/',
+          home: '/'
+        },
+      },
+    },
+  },
 }
